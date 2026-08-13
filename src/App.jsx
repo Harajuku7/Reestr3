@@ -16,6 +16,7 @@ function Icon({ name, size = 20 }) {
 }
 
 const initialFilters = { people: "all", category: "all", status: "all", query: "" }
+const baseUrl = import.meta.env.BASE_URL
 
 export default function App() {
   const [navOpen, setNavOpen] = useState(false)
@@ -72,7 +73,7 @@ export default function App() {
       <div className="prototype-bar">Прототип научно-просветительского каталога</div>
       <header className="site-header">
         <a className="brand" href="#top" aria-label="На главную страницу каталога">
-          <img src="/assets/kuzbass-coat-of-arms.png" width="50" height="58" alt="Герб Кемеровской области - Кузбасса" />
+          <img src={`${baseUrl}assets/kuzbass-coat-of-arms.png`} width="50" height="58" alt="Герб Кемеровской области - Кузбасса" />
           <span><b>Наследие Кузбасса</b><small>электронный каталог</small></span>
         </a>
         <nav className={`main-nav${navOpen ? " is-open" : ""}`} aria-label="Основная навигация">
@@ -120,7 +121,7 @@ export default function App() {
               <p>Выберите народ на карте</p>
             </div>
             <div className="map-canvas" data-active={activePeople}>
-              <img src="/assets/kemerovo-outline-raster.png" width="713" height="1023" alt="Контурная карта Кемеровской области с муниципальными границами" />
+              <img src={`${baseUrl}assets/kemerovo-outline-raster.png`} width="713" height="1023" alt="Контурная карта Кемеровской области с муниципальными границами" />
               <button className="map-marker map-marker--russian" type="button" aria-pressed={activePeople === "russian"} onClick={() => choosePeople("russian")}><span className="marker-index">03</span><span>Русские<small>вся территория</small></span></button>
               <button className="map-marker map-marker--teleut" type="button" aria-pressed={activePeople === "teleut"} onClick={() => choosePeople("teleut")}><span className="marker-index">02</span><span>Телеуты<small>Бачатские земли</small></span></button>
               <button className="map-marker map-marker--shor" type="button" aria-pressed={activePeople === "shor"} onClick={() => choosePeople("shor")}><span className="marker-index">01</span><span>Шорцы<small>Горная Шория</small></span></button>
@@ -147,7 +148,7 @@ export default function App() {
           <div className="people-list">
             {people.map((item, index) => (
               <article className="people-story" id={`people-${item.id}`} key={item.id}>
-                <div className="people-image"><img src={item.image} alt={item.alt} loading="lazy" width="1200" height="800" /><span>0{index + 1}</span></div>
+                <div className="people-image"><img src={`${baseUrl}${item.image}`} alt={item.alt} loading="lazy" width="1200" height="800" /><span>0{index + 1}</span></div>
                 <div className="people-copy"><p className="kicker">{item.eyebrow}</p><h3>{item.name}</h3><p>{item.summary}</p><p className="area"><Icon name="marker" size={19} />{item.area}</p><div className="story-links"><button type="button" className="primary-button compact" onClick={() => openCatalog({ people: item.id })}>Смотреть наследие <Icon name="arrow" /></button><a href={item.source} target="_blank" rel="noreferrer">Источник изображения</a></div></div>
               </article>
             ))}
@@ -182,13 +183,13 @@ export default function App() {
           })}</div> : <div className="empty-state"><Icon name="book" size={32} /><h3>По выбранным условиям записей пока нет</h3><p>Попробуйте убрать один из фильтров или изменить поисковый запрос.</p><button className="primary-button compact" type="button" onClick={() => { setFilters(initialFilters); setQuery("") }}>Показать все записи</button></div>}
         </section>
 
-        <section className="final-cta"><p className="kicker">Исследуйте наследие Кузбасса</p><h2>От живой традиции<br />к научному описанию</h2><button className="primary-button light" type="button" onClick={() => scrollTo("catalog")}>Открыть каталог <Icon name="arrow" /></button></section>
+        <section className="final-cta" style={{ "--final-cta-image": `url("${baseUrl}assets/shor-culture.webp")` }}><p className="kicker">Исследуйте наследие Кузбасса</p><h2>От живой традиции<br />к научному описанию</h2><button className="primary-button light" type="button" onClick={() => scrollTo("catalog")}>Открыть каталог <Icon name="arrow" /></button></section>
       </main>
 
       <footer className="site-footer">
-        <div className="footer-brand"><img src="/assets/kuzbass-coat-of-arms.png" width="54" height="63" alt="" /><div><strong>Кемеровский государственный институт культуры</strong><span>Научно-просветительский проект</span></div></div>
+        <div className="footer-brand"><img src={`${baseUrl}assets/kuzbass-coat-of-arms.png`} width="54" height="63" alt="" /><div><strong>Кемеровский государственный институт культуры</strong><span>Научно-просветительский проект</span></div></div>
         <div><p>Разделы</p><a href="#people-shor">Шорцы</a><a href="#people-teleut">Телеуты</a><a href="#people-russian">Русские</a><a href="#catalog">Каталог</a></div>
-        <div><p>Документы</p><a href="/SOURCES.md">Источники материалов</a><a href="/PRIVACY.md">Политика конфиденциальности</a><a href="/USAGE.md">Правила использования</a></div>
+        <div><p>Документы</p><a href={`${baseUrl}SOURCES.md`}>Источники материалов</a><a href={`${baseUrl}PRIVACY.md`}>Политика конфиденциальности</a><a href={`${baseUrl}USAGE.md`}>Правила использования</a></div>
         <div className="footer-bottom"><span>© 2026 КемГИК</span><span>Прототип. Не является опубликованным официальным реестром.</span></div>
       </footer>
       <div className="sr-only" aria-live="polite" aria-atomic="true">{announcement}</div>

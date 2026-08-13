@@ -3,7 +3,7 @@ export const people = [
     id: "shor",
     name: "Шорцы",
     eyebrow: "Коренной малочисленный народ",
-    image: "/assets/shor-culture.webp",
+    image: "assets/shor-culture.webp",
     alt: "Участники культурной программы в традиционных костюмах у деревянного дома",
     area: "Юг Кузбасса, Горная Шория, бассейны рек Кондомы и Мрас-Су",
     summary:
@@ -14,7 +14,7 @@ export const people = [
     id: "teleut",
     name: "Телеуты",
     eyebrow: "Коренной малочисленный народ",
-    image: "/assets/teleut-festival.jpg",
+    image: "assets/teleut-festival.jpg",
     alt: "Участница телеутского национального праздника в традиционном головном уборе",
     area: "Беловский и Гурьевский округа, бассейны Большого и Малого Бачата",
     summary:
@@ -25,7 +25,7 @@ export const people = [
     id: "russian",
     name: "Русские",
     eyebrow: "Историко-культурные традиции региона",
-    image: "/assets/russian-culture.webp",
+    image: "assets/russian-culture.webp",
     alt: "Здание центра русского фольклора и этнографии в Новокузнецке",
     area: "Города и сельские территории Кузбасса",
     summary:

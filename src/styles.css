@@ -194,7 +194,7 @@ h1 { width: 100%; max-width: 780px; margin-bottom: 28px; font-size: clamp(2.3rem
 .empty-state h3 { margin: 20px 0 10px; font-size: 1.8rem; }
 .empty-state p { color: var(--muted); margin: 0 auto 28px; }
 
-.final-cta { width: var(--content); min-height: 500px; margin: 0 auto; padding: clamp(70px, 10vw, 145px); color: #fff; background: linear-gradient(rgba(5,40,65,.78), rgba(5,40,65,.88)), url('/assets/shor-culture.webp') center 38% / cover; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.final-cta { width: var(--content); min-height: 500px; margin: 0 auto; padding: clamp(70px, 10vw, 145px); color: #fff; background-color: #0b3554; background-image: linear-gradient(rgba(5,40,65,.78), rgba(5,40,65,.88)), var(--final-cta-image); background-position: center, center 38%; background-size: auto, cover; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
 .final-cta .kicker { color: #b8dcf2; }
 .final-cta h2 { font-size: clamp(2.8rem, 6vw, 6rem); line-height: .96; margin-bottom: 42px; }
 
