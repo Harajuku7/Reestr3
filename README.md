@@ -26,6 +26,6 @@ npm test
 
 ## GitHub Pages
 
-Публикация выполняется автоматически из ветки `main` через GitHub Actions. Vite собирает сайт с базовым путем `/reestr3/`, после чего workflow публикует папку `dist`.
+Публикация выполняется автоматически из ветки `main` через GitHub Actions. Vite собирает сайт с базовым путем `/Reestr3/`, после чего workflow публикует папку `dist`.
 
-Адрес проекта после успешного workflow: `https://harajuku7.github.io/reestr3/`.
+Адрес проекта после успешного workflow: `https://harajuku7.github.io/Reestr3/`.
