@@ -32,7 +32,7 @@ export default function App() {
 
   const suggestions = useMemo(() => {
     const value = query.trim().toLocaleLowerCase("ru")
-    const defaults = ["Обряды", "Ремесла", "Шорцы", "Телеуты", "Русские"]
+    const defaults = ["Обряды", "Ремесла", "Шорцы", "Телеуты"]
     if (!value) return defaults.slice(0, 4)
     const pool = [...catalogItems.map((item) => item.title), ...defaults]
     return pool.filter((item) => item.toLocaleLowerCase("ru").includes(value)).slice(0, 5)
@@ -108,7 +108,7 @@ export default function App() {
           <div className="hero-copy">
             <p className="kicker">Кемеровская область - Кузбасс</p>
             <h1>Каталог нематериального этнокультурного наследия коренных малочисленных народов Кузбасса</h1>
-            <p className="hero-lead">Живые традиции, обряды, ремесла и знания шорцев, телеутов и русских в едином научно-просветительском пространстве.</p>
+            <p className="hero-lead">Живые традиции, обряды, ремесла и знания шорцев и телеутов в едином научно-просветительском пространстве.</p>
             <div className="hero-actions">
               <button className="primary-button" type="button" onClick={() => openCatalog()}><span>Открыть каталог</span><Icon name="arrow" /></button>
               <a className="quiet-link" href="#map-description">Как устроена карта</a>
@@ -122,13 +122,12 @@ export default function App() {
             </div>
             <div className="map-canvas" data-active={activePeople}>
               <img src={`${baseUrl}assets/kemerovo-outline-raster.png`} width="713" height="1023" alt="Контурная карта Кемеровской области с муниципальными границами" />
-              <button className="map-marker map-marker--russian" type="button" aria-pressed={activePeople === "russian"} onClick={() => choosePeople("russian")}><span className="marker-index">03</span><span>Русские<small>вся территория</small></span></button>
               <button className="map-marker map-marker--teleut" type="button" aria-pressed={activePeople === "teleut"} onClick={() => choosePeople("teleut")}><span className="marker-index">02</span><span>Телеуты<small>Бачатские земли</small></span></button>
               <button className="map-marker map-marker--shor" type="button" aria-pressed={activePeople === "shor"} onClick={() => choosePeople("shor")}><span className="marker-index">01</span><span>Шорцы<small>Горная Шория</small></span></button>
               <div className="map-note">Схема ареалов предварительная и будет уточнена научным коллективом</div>
             </div>
             <div className="map-legend" aria-label="Условные обозначения">
-              <span><i className="legend-mark shor" />Шорцы</span><span><i className="legend-mark teleut" />Телеуты</span><span><i className="legend-mark russian" />Русские</span>
+              <span><i className="legend-mark shor" />Шорцы</span><span><i className="legend-mark teleut" />Телеуты</span>
             </div>
           </div>
         </section>
@@ -188,7 +187,7 @@ export default function App() {
 
       <footer className="site-footer">
         <div className="footer-brand"><img src={`${baseUrl}assets/kuzbass-coat-of-arms.png`} width="54" height="63" alt="" /><div><strong>Кемеровский государственный институт культуры</strong><span>Научно-просветительский проект</span></div></div>
-        <div><p>Разделы</p><a href="#people-shor">Шорцы</a><a href="#people-teleut">Телеуты</a><a href="#people-russian">Русские</a><a href="#catalog">Каталог</a></div>
+        <div><p>Разделы</p><a href="#people-shor">Шорцы</a><a href="#people-teleut">Телеуты</a><a href="#catalog">Каталог</a></div>
         <div><p>Документы</p><a href={`${baseUrl}SOURCES.md`}>Источники материалов</a><a href={`${baseUrl}PRIVACY.md`}>Политика конфиденциальности</a><a href={`${baseUrl}USAGE.md`}>Правила использования</a></div>
         <div className="footer-bottom"><span>© 2026 КемГИК</span><span>Прототип. Не является опубликованным официальным реестром.</span></div>
       </footer>

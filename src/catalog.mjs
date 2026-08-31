@@ -20,17 +20,6 @@ export const people = [
     summary:
       "Коренной малочисленный тюркоязычный народ Кузбасса. Телеуты традиционно являлись скотоводами, перешедшими на оседлый образ жизни. Бачатские телеуты славятся своими ремеслами, многие из которых бытуют по сей день. Из традиционных верований сохраняются пережитки родовых культов, ранее широкое распространение имел шаманизм.",
     source: "https://visit-kuzbass.ru/events/regionalnyij-teleutskij-naczionalnyij-prazdnik-edinstva-tele-kaan"
-  },
-  {
-    id: "russian",
-    name: "Русские",
-    eyebrow: "Историко-культурные традиции региона",
-    image: "assets/russian-culture.webp",
-    alt: "Здание центра русского фольклора и этнографии в Новокузнецке",
-    area: "Города и сельские территории Кузбасса",
-    summary:
-      "Русская традиционная культура Кузбасса включает празднично-обрядовые практики, фольклор, народные игры, ремесла, семейный быт и локальные сибирские формы гостеприимства.",
-    source: "https://www.culture.ru/institutes/103017"
   }
 ]
 
@@ -85,12 +74,9 @@ export const categories = [
 export const catalogItems = [
   { id: 1, title: "Весенний календарный обряд", people: "shor", category: "rituals", status: "transformed", place: "Горная Шория" },
   { id: 2, title: "Ткачество традиционного пояса", people: "teleut", category: "production", status: "preserved", place: "Беловский округ" },
-  { id: 3, title: "Кузнецкие вечерки", people: "russian", category: "oral-performance", status: "transformed", place: "Новокузнецк" },
   { id: 4, title: "Заготовка и обработка кедрового ореха", people: "shor", category: "production", status: "partial", place: "Таштагольский округ" },
   { id: 5, title: "Праздничная песенная традиция", people: "teleut", category: "oral-performance", status: "partial", place: "Гурьевский округ" },
-  { id: 6, title: "Сибирское чаепитие", people: "russian", category: "everyday", status: "preserved", place: "Кемеровская область" },
-  { id: 7, title: "Героические сказания", people: "shor", category: "oral-performance", status: "partial", place: "Мысковский округ" },
-  { id: 8, title: "Традиционные народные игры", people: "russian", category: "games", status: "transformed", place: "Кузбасс" }
+  { id: 7, title: "Героические сказания", people: "shor", category: "oral-performance", status: "partial", place: "Мысковский округ" }
 ]
 
 export const statuses = {

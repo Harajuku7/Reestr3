@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import { catalogItems, categories, filterCatalog } from "./catalog.mjs"
+import { catalogItems, categories, filterCatalog, people } from "./catalog.mjs"
 
 const base = { people: "all", category: "all", status: "all", query: "" }
 
@@ -11,8 +11,8 @@ test("фильтрует записи по народу", () => {
 })
 
 test("совмещает категорию и статус", () => {
-  const result = filterCatalog(catalogItems, { ...base, category: "everyday", status: "preserved" })
-  assert.deepEqual(result.map((item) => item.title), ["Сибирское чаепитие"])
+  const result = filterCatalog(catalogItems, { ...base, category: "production", status: "preserved" })
+  assert.deepEqual(result.map((item) => item.title), ["Ткачество традиционного пояса"])
 })
 
 test("ищет без учета регистра", () => {
@@ -28,4 +28,9 @@ test("возвращает пустой список для неизвестно
 test("каждая запись связана с категорией классификации", () => {
   const categoryIds = new Set(categories.map((category) => category.id))
   assert.ok(catalogItems.every((item) => categoryIds.has(item.category)))
+})
+
+test("каталог содержит только шорцев и телеутов", () => {
+  assert.deepEqual(people.map((item) => item.id), ["shor", "teleut"])
+  assert.ok(catalogItems.every((item) => item.people === "shor" || item.people === "teleut"))
 })

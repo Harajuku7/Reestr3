@@ -92,10 +92,9 @@ h1 { width: 100%; max-width: 780px; margin-bottom: 28px; font-size: clamp(2.3rem
 .map-canvas { position: relative; flex: 1; min-height: 560px; margin-top: 22px; isolation: isolate; overflow: hidden; background: #e7edf1; border: 1px solid var(--line); }
 .map-canvas::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; border: 8px solid rgba(255,255,255,.35); }
 .map-canvas img { position: absolute; z-index: 0; inset: -4% 0 -9%; width: 100%; height: 113%; object-fit: contain; filter: grayscale(1) contrast(.88); opacity: .9; }
-.map-canvas[data-active="shor"] img, .map-canvas[data-active="teleut"] img, .map-canvas[data-active="russian"] img { filter: grayscale(1) contrast(.88); }
+.map-canvas[data-active="shor"] img, .map-canvas[data-active="teleut"] img { filter: grayscale(1) contrast(.88); }
 .map-marker { position: absolute; z-index: 3; min-height: 54px; border: 1px solid #74828d; background: rgba(255, 255, 255, .96); color: var(--ink); padding: 7px 13px 7px 8px; display: flex; align-items: center; gap: 9px; text-align: left; transition: background .18s ease, color .18s ease; }
 .map-marker:hover, .map-marker[aria-pressed="true"] { color: #fff; background: var(--accent); border-color: var(--accent); }
-.map-marker--russian { top: 24%; right: 8%; }
 .map-marker--teleut { top: 56%; left: 11%; }
 .map-marker--shor { bottom: 12%; left: 52%; }
 .marker-index { width: 36px; height: 36px; display: grid; place-items: center; border: 1px solid currentColor; font-size: .66em; }
@@ -107,7 +106,6 @@ h1 { width: 100%; max-width: 780px; margin-bottom: 28px; font-size: clamp(2.3rem
 .legend-mark { width: 13px; height: 4px; background: currentColor; }
 .legend-mark.shor { color: #176b5c; }
 .legend-mark.teleut { color: #07588d; }
-.legend-mark.russian { color: #4f5f6b; }
 
 .map-alternative { width: var(--content); margin: 0 auto; padding: 48px clamp(24px, 5vw, 72px); display: grid; grid-template-columns: .8fr 1.2fr; gap: 64px; border-inline: 1px solid var(--line); border-top: 1px solid var(--line); }
 .map-alternative h2 { margin: 0; font-size: clamp(1.55rem, 2.4vw, 2.55rem); line-height: 1.1; }
@@ -126,8 +124,8 @@ h1 { width: 100%; max-width: 780px; margin-bottom: 28px; font-size: clamp(2.3rem
 .inline-link { margin-top: 20px; display: inline-flex; align-items: center; gap: 12px; color: #fff; }
 
 .people-section { width: var(--content); margin: 0 auto; border-inline: 1px solid var(--line); }
-.section-intro { padding: clamp(80px, 10vw, 140px) clamp(28px, 6vw, 90px); display: grid; grid-template-columns: .35fr 1.05fr .6fr; align-items: end; gap: 45px; }
-.section-intro .section-number { align-self: start; }
+.section-intro { padding: clamp(80px, 10vw, 140px) clamp(28px, 6vw, 90px); display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(250px, .6fr); align-items: end; column-gap: 45px; row-gap: 22px; }
+.section-intro .section-number { grid-column: 1 / -1; align-self: start; margin-bottom: 0; }
 .section-intro h2 { margin: 0; font-size: clamp(2.4rem, 4.2vw, 4rem); line-height: 1; }
 .section-intro > p:last-child { margin: 0 0 8px; color: var(--muted); max-width: 390px; }
 .people-list { border-top: 1px solid var(--line); }
@@ -222,8 +220,7 @@ h1 { width: 100%; max-width: 780px; margin-bottom: 28px; font-size: clamp(2.3rem
   .hero-copy { padding-inline: 34px; }
   .map-stage { padding: 28px; }
   .map-canvas { min-height: 510px; }
-  .map-marker--russian { right: 4%; }
-  .section-intro { grid-template-columns: .35fr 1fr; }
+  .section-intro { grid-template-columns: minmax(0, 1fr) minmax(240px, .6fr); }
   .section-intro > p:last-child { grid-column: 2; }
   .classification { gap: 60px; }
 }
@@ -258,7 +255,6 @@ h1 { width: 100%; max-width: 780px; margin-bottom: 28px; font-size: clamp(2.3rem
   .map-heading { align-items: start; }
   .map-heading > p { max-width: 100px; text-align: right; }
   .map-canvas { min-height: 660px; }
-  .map-marker--russian { top: 24%; right: 2%; }
   .map-marker--teleut { top: 56%; left: 1%; }
   .map-marker--shor { bottom: 11%; left: 45%; }
   .map-alternative, .about-section, .classification { grid-template-columns: 1fr; }
@@ -298,7 +294,6 @@ h1 { width: 100%; max-width: 780px; margin-bottom: 28px; font-size: clamp(2.3rem
   .map-canvas img { inset: -2% -8% -5%; width: 116%; max-width: none; height: 107%; }
   .map-marker { min-height: 48px; padding-right: 9px; font-size: .8em; }
   .marker-index { width: 30px; height: 30px; }
-  .map-marker--russian { top: 20%; right: 0; }
   .map-marker--teleut { top: 55%; left: 0; }
   .map-marker--shor { bottom: 12%; left: 41%; }
   .map-note { max-width: 205px; font-size: .58em; }
