@@ -107,7 +107,7 @@ export default function App() {
         <section className="hero" id="top">
           <div className="hero-copy">
             <p className="kicker">Кемеровская область - Кузбасс</p>
-            <h1>Каталог нематериального этнокультурного наследия народов Кузбасса</h1>
+            <h1>Каталог нематериального этнокультурного наследия коренных малочисленных народов Кузбасса</h1>
             <p className="hero-lead">Живые традиции, обряды, ремесла и знания шорцев, телеутов и русских в едином научно-просветительском пространстве.</p>
             <div className="hero-actions">
               <button className="primary-button" type="button" onClick={() => openCatalog()}><span>Открыть каталог</span><Icon name="arrow" /></button>
@@ -140,11 +140,11 @@ export default function App() {
 
         <section className="about-section" id="about" aria-labelledby="about-title">
           <div className="about-title"><p className="section-number">01 / О каталоге</p><h2 id="about-title">Сохранять не только предметы, но и живую память</h2></div>
-          <div className="about-copy"><p>Нематериальное этнокультурное наследие живет в действиях людей: в обрядах и праздниках, ремесленных навыках, песнях, преданиях, способах хозяйствования и передачи опыта.</p><p>Каталог объединяет научные описания, фотографии, видеоматериалы и связанные музейные предметы. Он создается научным коллективом Кемеровского государственного института культуры при поддержке гранта Российского научного фонда.</p><a className="inline-link" href="#classification">Посмотреть классификацию <Icon name="arrow" size={18} /></a></div>
+          <div className="about-copy"><p>Нематериальное этнокультурное наследие живет в действиях людей: в обрядах и праздниках, ремесленных навыках, песнях, преданиях, способах хозяйствования и передачи опыта.</p><p>Каталог объединяет научные описания объектов, фотографии, видеоматериалы и музейные предметы, связанные с ними. Он создается научным коллективом Кемеровского государственного института культуры при поддержке гранта Российского научного фонда.</p><a className="inline-link" href="#classification">Посмотреть классификацию <Icon name="arrow" size={18} /></a></div>
         </section>
 
         <section className="people-section" aria-labelledby="people-title">
-          <div className="section-intro"><p className="section-number">02 / Народы</p><h2 id="people-title">Три культурные традиции.<br />Один регион.</h2><p>Разделы равнозначны и раскрывают наследие через практики, территории и связанные музейные свидетельства.</p></div>
+          <div className="section-intro"><p className="section-number">02 / Народы</p><h2 id="people-title">Разные традиции.<br />Один регион.</h2><p>Разделы равнозначны и раскрывают наследие через практики, территории и связанные музейные свидетельства.</p></div>
           <div className="people-list">
             {people.map((item, index) => (
               <article className="people-story" id={`people-${item.id}`} key={item.id}>
@@ -156,16 +156,16 @@ export default function App() {
         </section>
 
         <section className="classification" id="classification" aria-labelledby="classification-title">
-          <div className="classification-intro"><p className="section-number">03 / Классификация</p><h2 id="classification-title">Наследие можно исследовать по видам</h2><p>Предварительная классификация едина для всех трех народов. Выберите направление, чтобы перейти к записям каталога.</p></div>
+          <div className="classification-intro"><p className="section-number">03 / Классификация</p><h2 id="classification-title">Нематериальное культурное наследие разнообразно и неоднородно</h2><p>Для удобства объекты объединяются в категории. Выберите направление, чтобы перейти к записям каталога.</p></div>
           <ol className="category-list">
-            {categories.map((category) => <li key={category.id}><button type="button" onClick={() => openCatalog({ category: category.id })}><span className="category-index">{category.index}</span><span className="category-name">{category.label}</span><span className="category-description">{category.description}</span><Icon name="arrow" /></button></li>)}
+            {categories.map((category) => <li key={category.id}><button type="button" onClick={() => openCatalog({ category: category.id })}><span className="category-index">{category.index}</span><span className="category-name">{category.label}</span><span className="category-description">{category.items.map((item) => <span key={item}>{item}</span>)}</span><Icon name="arrow" /></button></li>)}
           </ol>
         </section>
 
         <section className="catalog-section" id="catalog" aria-labelledby="catalog-title">
           <div className="catalog-head"><div><p className="section-number">04 / Каталог</p><h2 id="catalog-title">Найдите объект наследия</h2></div><p>Демонстрационные записи показывают будущую логику поиска и фильтров. Они не являются утвержденными карточками реестра.</p></div>
           <form className="catalog-search" role="search" onSubmit={submitSearch}>
-            <label htmlFor="heritage-search">Поиск по названию, обряду или предмету</label>
+            <label htmlFor="heritage-search">Поиск по ключевому слову или наименованию объекта</label>
             <div className="search-field"><Icon name="search" size={23} /><input id="heritage-search" type="search" value={query} autoComplete="off" aria-autocomplete="list" aria-controls="search-suggestions" aria-expanded={searchOpen} placeholder="Например, ткачество или обряд" onFocus={() => setSearchOpen(true)} onChange={(event) => { setQuery(event.target.value); setSearchOpen(true) }} /><button type="submit">Найти</button></div>
             {searchOpen && <div className="suggestions" id="search-suggestions" role="listbox" aria-label="Подсказки поиска">{suggestions.length ? suggestions.map((suggestion) => <button type="button" role="option" aria-selected="false" key={suggestion} onClick={() => { setQuery(suggestion); openCatalog({ query: suggestion }) }}><Icon name="search" size={17} />{suggestion}</button>) : <p>Подсказок нет. Проверьте написание или выберите категорию ниже.</p>}</div>}
           </form>

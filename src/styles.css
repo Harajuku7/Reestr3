@@ -151,11 +151,14 @@ h1 { width: 100%; max-width: 780px; margin-bottom: 28px; font-size: clamp(2.3rem
 .classification-intro > p:last-child { color: var(--muted); max-width: 500px; }
 .category-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
 .category-list li { border-bottom: 1px solid var(--line); }
-.category-list button { width: 100%; min-height: 110px; border: 0; background: transparent; color: var(--ink); display: grid; grid-template-columns: 48px minmax(150px, .8fr) 1.2fr 28px; gap: 24px; align-items: center; text-align: left; transition: color .2s ease, padding .2s ease; }
+.category-list button { width: 100%; min-height: 132px; padding-block: 22px; border: 0; background: transparent; color: var(--ink); display: grid; grid-template-columns: 48px minmax(0, 1fr) 28px; column-gap: 24px; row-gap: 12px; align-items: start; text-align: left; transition: color .2s ease, padding .2s ease; }
 .category-list button:hover { color: var(--accent); padding-left: 8px; }
-.category-index { font-size: .65em; color: var(--muted); }
+.category-index { padding-top: 5px; font-size: .65em; color: var(--muted); }
 .category-name { font-size: clamp(1.1rem, 1.8vw, 1.55rem); font-weight: 700; }
-.category-description { color: var(--muted); font-size: .76em; }
+.category-description { grid-column: 2; display: grid; gap: 5px; color: var(--muted); font-size: .76em; line-height: 1.38; }
+.category-description > span { position: relative; padding-left: 14px; }
+.category-description > span::before { content: ""; position: absolute; left: 0; top: .64em; width: 4px; height: 4px; background: currentColor; }
+.category-list button > .icon { grid-column: 3; grid-row: 1 / 3; align-self: center; }
 
 .catalog-section { width: var(--content); margin: 0 auto; padding: clamp(80px, 11vw, 150px) clamp(28px, 6vw, 90px); background: var(--paper-light); border: 1px solid var(--line); }
 .catalog-head { display: grid; grid-template-columns: 1.1fr .9fr; align-items: end; gap: 60px; }
@@ -271,8 +274,8 @@ h1 { width: 100%; max-width: 780px; margin-bottom: 28px; font-size: clamp(2.3rem
   .people-copy h3 { font-size: clamp(3rem, 11vw, 4.25rem); }
   .classification { gap: 42px; }
   .classification-intro { position: static; }
-  .category-list button { grid-template-columns: 42px 1fr 24px; min-height: 92px; gap: 15px; }
-  .category-description { grid-column: 2; margin-top: -22px; padding-bottom: 14px; }
+  .category-list button { grid-template-columns: 42px minmax(0, 1fr) 24px; min-height: 112px; column-gap: 15px; }
+  .category-description { padding-bottom: 8px; }
   .catalog-head { grid-template-columns: 1fr; gap: 22px; }
   .filters { grid-template-columns: 1fr 1fr; }
   .catalog-list article { grid-template-columns: 10px 1fr 44px; gap: 14px; }
