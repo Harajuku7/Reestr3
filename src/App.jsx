@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react"
-import { catalogItems, categories, filterCatalog, people, statuses } from "./catalog.mjs"
+import { useEffect, useState } from "react"
+import { catalogItems, catalogHref, categories, people } from "./catalog.mjs"
+import CatalogPage from './CatalogPage.jsx'
 
 function Icon({ name, size = 20 }) {
   const paths = {
@@ -15,30 +16,36 @@ function Icon({ name, size = 20 }) {
   return <svg className="icon" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[name]}</svg>
 }
 
-const initialFilters = { people: "all", category: "all", status: "all", query: "" }
 const baseUrl = import.meta.env.BASE_URL
+const isCatalogPage = /\/catalog(?:\/index\.html|\/)?$/.test(window.location.pathname)
+function readAccessibility() {
+  try { return JSON.parse(localStorage.getItem('kuzbass-accessibility') || '{}') ?? {} } catch { return {} }
+}
 
 export default function App() {
   const [navOpen, setNavOpen] = useState(false)
   const [accessOpen, setAccessOpen] = useState(false)
-  const [fontSize, setFontSize] = useState("normal")
-  const [contrast, setContrast] = useState(false)
-  const [spacing, setSpacing] = useState(false)
+  const [fontSize, setFontSize] = useState(() => ['normal', 'large', 'xlarge'].includes(readAccessibility().fontSize) ? readAccessibility().fontSize : 'normal')
+  const [contrast, setContrast] = useState(() => readAccessibility().contrast === true)
+  const [spacing, setSpacing] = useState(() => readAccessibility().spacing === true)
   const [activePeople, setActivePeople] = useState("shor")
-  const [query, setQuery] = useState("")
-  const [searchOpen, setSearchOpen] = useState(false)
-  const [filters, setFilters] = useState(initialFilters)
   const [announcement, setAnnouncement] = useState("")
 
-  const suggestions = useMemo(() => {
-    const value = query.trim().toLocaleLowerCase("ru")
-    const defaults = ["Обряды", "Ремесла", "Шорцы", "Телеуты"]
-    if (!value) return defaults.slice(0, 4)
-    const pool = [...catalogItems.map((item) => item.title), ...defaults]
-    return pool.filter((item) => item.toLocaleLowerCase("ru").includes(value)).slice(0, 5)
-  }, [query])
+  useEffect(() => {
+    try { localStorage.setItem('kuzbass-accessibility', JSON.stringify({ fontSize, contrast, spacing })) } catch { /* Доступность работает и без хранилища. */ }
+  }, [fontSize, contrast, spacing])
 
-  const filteredItems = useMemo(() => filterCatalog(catalogItems, filters), [filters])
+  useEffect(() => {
+    const closePanels = event => {
+      if (event.key === 'Escape') {
+        if (accessOpen) document.querySelector('.access-trigger')?.focus()
+        else if (navOpen) document.querySelector('.menu-button')?.focus()
+        setAccessOpen(false); setNavOpen(false)
+      }
+    }
+    window.addEventListener('keydown', closePanels)
+    return () => window.removeEventListener('keydown', closePanels)
+  }, [accessOpen, navOpen])
 
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })
@@ -51,14 +58,7 @@ export default function App() {
   }
 
   const openCatalog = (next = {}) => {
-    setFilters((current) => ({ ...current, ...next }))
-    setSearchOpen(false)
-    window.setTimeout(() => scrollTo("catalog"), 60)
-  }
-
-  const submitSearch = (event) => {
-    event.preventDefault()
-    openCatalog({ query })
+    window.location.assign(catalogHref(next, null, baseUrl))
   }
 
   const resetAccessibility = () => {
@@ -70,17 +70,17 @@ export default function App() {
   return (
     <div className={`site font-${fontSize}${contrast ? " high-contrast" : ""}${spacing ? " spaced" : ""}`}>
       <a className="skip-link" href="#main">Перейти к основному содержанию</a>
-      <div className="prototype-bar">Прототип научно-просветительского каталога</div>
+      <div className="prototype-bar">{isCatalogPage ? 'Научно-просветительский каталог / КемГИК' : 'Прототип научно-просветительского каталога'}</div>
       <header className="site-header">
-        <a className="brand" href="#top" aria-label="На главную страницу каталога">
+        <a className="brand" href={`${baseUrl}#top`} aria-label="На главную страницу каталога">
           <img src={`${baseUrl}assets/kuzbass-coat-of-arms.png`} width="50" height="58" alt="Герб Кемеровской области - Кузбасса" />
           <span><b>Наследие Кузбасса</b><small>электронный каталог</small></span>
         </a>
         <nav className={`main-nav${navOpen ? " is-open" : ""}`} aria-label="Основная навигация">
-          <a href="#top" onClick={() => setNavOpen(false)}>Главная</a>
-          {people.map((item) => <a key={item.id} href={`#people-${item.id}`} onClick={() => { setActivePeople(item.id); setNavOpen(false) }}>{item.name}</a>)}
-          <a href="#catalog" onClick={() => setNavOpen(false)}>Каталог</a>
-          <a href="#about" onClick={() => setNavOpen(false)}>О проекте</a>
+          <a href={`${baseUrl}#top`} aria-current={!isCatalogPage ? 'page' : undefined} onClick={() => setNavOpen(false)}>Главная</a>
+          {people.map((item) => <a key={item.id} href={isCatalogPage ? catalogHref({ people: item.id }, null, baseUrl) : `#people-${item.id}`} onClick={() => { setActivePeople(item.id); setNavOpen(false) }}>{item.name}</a>)}
+          <a href={catalogHref({}, null, baseUrl)} aria-current={isCatalogPage ? 'page' : undefined} onClick={() => setNavOpen(false)}>Каталог</a>
+          <a href={`${baseUrl}#about`} onClick={() => setNavOpen(false)}>О проекте</a>
         </nav>
         <div className="header-actions">
           <button className="icon-button access-trigger" type="button" aria-label="Версия для слабовидящих" aria-expanded={accessOpen} aria-controls="access-panel" onClick={() => setAccessOpen((value) => !value)}>
@@ -103,7 +103,8 @@ export default function App() {
         </section>
       )}
 
-      <main id="main">
+      <main id="main" className={isCatalogPage ? 'registry-main' : undefined}>
+        {isCatalogPage ? <CatalogPage/> : <>
         <section className="hero" id="top">
           <div className="hero-copy">
             <p className="kicker">Кемеровская область - Кузбасс</p>
@@ -162,34 +163,20 @@ export default function App() {
         </section>
 
         <section className="catalog-section" id="catalog" aria-labelledby="catalog-title">
-          <div className="catalog-head"><div><p className="section-number">04 / Каталог</p><h2 id="catalog-title">Найдите объект наследия</h2></div><p>Демонстрационные записи показывают будущую логику поиска и фильтров. Они не являются утвержденными карточками реестра.</p></div>
-          <form className="catalog-search" role="search" onSubmit={submitSearch}>
-            <label htmlFor="heritage-search">Поиск по ключевому слову или наименованию объекта</label>
-            <div className="search-field"><Icon name="search" size={23} /><input id="heritage-search" type="search" value={query} autoComplete="off" aria-autocomplete="list" aria-controls="search-suggestions" aria-expanded={searchOpen} placeholder="Например, ткачество или обряд" onFocus={() => setSearchOpen(true)} onChange={(event) => { setQuery(event.target.value); setSearchOpen(true) }} /><button type="submit">Найти</button></div>
-            {searchOpen && <div className="suggestions" id="search-suggestions" role="listbox" aria-label="Подсказки поиска">{suggestions.length ? suggestions.map((suggestion) => <button type="button" role="option" aria-selected="false" key={suggestion} onClick={() => { setQuery(suggestion); openCatalog({ query: suggestion }) }}><Icon name="search" size={17} />{suggestion}</button>) : <p>Подсказок нет. Проверьте написание или выберите категорию ниже.</p>}</div>}
-          </form>
-          <div className="filters" aria-label="Фильтры каталога">
-            <label>Народ<select value={filters.people} onChange={(event) => setFilters({ ...filters, people: event.target.value })}><option value="all">Все народы</option>{people.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
-            <label>Вид наследия<select value={filters.category} onChange={(event) => setFilters({ ...filters, category: event.target.value })}><option value="all">Все виды</option>{categories.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}</select></label>
-            <label>Сохранность<select value={filters.status} onChange={(event) => setFilters({ ...filters, status: event.target.value })}><option value="all">Все состояния</option>{Object.entries(statuses).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
-            <button type="button" className="text-button reset-filter" onClick={() => { setFilters(initialFilters); setQuery("") }}><Icon name="reset" size={17} />Сбросить</button>
-          </div>
-          <div className="results-summary" aria-live="polite"><span>{filteredItems.length} {filteredItems.length === 1 ? "запись" : filteredItems.length > 1 && filteredItems.length < 5 ? "записи" : "записей"}</span><span>Прототип данных</span></div>
-          {filteredItems.length ? <div className="catalog-list">{filteredItems.map((item) => {
-            const person = people.find((value) => value.id === item.people)
-            const category = categories.find((value) => value.id === item.category)
-            return <article key={item.id}><span className={`status-dot status-${item.status}`} aria-hidden="true" /><div><p>{person.name} / {category.label}</p><h3>{item.title}</h3><span>{item.place}</span></div><div className="item-status"><small>Степень сохранности</small><b>{statuses[item.status]}</b></div><button type="button" aria-label={`Открыть запись «${item.title}»`} onClick={() => setAnnouncement(`Карточка «${item.title}» появится на следующем этапе прототипа`)}><Icon name="arrow" /></button></article>
-          })}</div> : <div className="empty-state"><Icon name="book" size={32} /><h3>По выбранным условиям записей пока нет</h3><p>Попробуйте убрать один из фильтров или изменить поисковый запрос.</p><button className="primary-button compact" type="button" onClick={() => { setFilters(initialFilters); setQuery("") }}>Показать все записи</button></div>}
+          <div className="catalog-head"><div><p className="section-number">04 / Каталог</p><h2 id="catalog-title">Найдите объект наследия</h2></div><p>Отдельная страница с поиском, фильтрами и паспортами традиций. Каждый объект можно изучить вместе со связанными предметами.</p></div>
+          <div className="home-catalog-links">{catalogItems.slice(0, 3).map(item => <a key={item.id} href={catalogHref({}, item.id, baseUrl)}><span>{people.find(person => person.id === item.people).name}</span><strong>{item.title}</strong><Icon name="arrow"/></a>)}</div>
+          <a className="primary-button" href={catalogHref({}, null, baseUrl)}>Перейти в каталог<Icon name="arrow"/></a>
         </section>
 
-        <section className="final-cta" style={{ "--final-cta-image": `url("${baseUrl}assets/shor-culture.webp")` }}><p className="kicker">Исследуйте наследие Кузбасса</p><h2>От живой традиции<br />к научному описанию</h2><button className="primary-button light" type="button" onClick={() => scrollTo("catalog")}>Открыть каталог <Icon name="arrow" /></button></section>
+        <section className="final-cta" style={{ "--final-cta-image": `url("${baseUrl}assets/shor-culture.webp")` }}><p className="kicker">Исследуйте наследие Кузбасса</p><h2>От живой традиции<br />к научному описанию</h2><a className="primary-button light" href={catalogHref({}, null, baseUrl)}>Открыть каталог <Icon name="arrow" /></a></section>
+        </>}
       </main>
 
       <footer className="site-footer">
         <div className="footer-brand"><img src={`${baseUrl}assets/kuzbass-coat-of-arms.png`} width="54" height="63" alt="" /><div><strong>Кемеровский государственный институт культуры</strong><span>Научно-просветительский проект</span></div></div>
-        <div><p>Разделы</p><a href="#people-shor">Шорцы</a><a href="#people-teleut">Телеуты</a><a href="#catalog">Каталог</a></div>
+        <div><p>Разделы</p><a href={catalogHref({ people: 'shor' }, null, baseUrl)}>Шорцы</a><a href={catalogHref({ people: 'teleut' }, null, baseUrl)}>Телеуты</a><a href={catalogHref({}, null, baseUrl)}>Каталог</a></div>
         <div><p>Документы</p><a href={`${baseUrl}SOURCES.md`}>Источники материалов</a><a href={`${baseUrl}PRIVACY.md`}>Политика конфиденциальности</a><a href={`${baseUrl}USAGE.md`}>Правила использования</a></div>
-        <div className="footer-bottom"><span>© 2026 КемГИК</span><span>Прототип. Не является опубликованным официальным реестром.</span></div>
+        <div className="footer-bottom"><span>© 2026 КемГИК</span><span>{isCatalogPage ? 'Описания каталога проходят научную редакцию.' : 'Прототип. Не является опубликованным официальным реестром.'}</span></div>
       </footer>
       <div className="sr-only" aria-live="polite" aria-atomic="true">{announcement}</div>
     </div>
