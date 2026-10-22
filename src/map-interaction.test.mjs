@@ -1,8 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { mapSettings, selectedPlaces, placeLatLng, shouldClusterTeleuts } from './map-interaction.mjs'
-import { geometryPoints, insideBoundary } from './map-geometry.mjs'
+import { mapSettings, selectedPlaces, placeLatLng } from './map-interaction.mjs'
+import { geometryPoints, insideBoundary, layoutLabels, rectanglesOverlap } from './map-geometry.mjs'
 
 const geography = JSON.parse(readFileSync(new URL('./kuzbass-map-data.geo.json', import.meta.url)))
 const districts = JSON.parse(readFileSync(new URL('./kuzbass-districts.geo.json', import.meta.url)))
@@ -15,19 +15,36 @@ test('map provides gradual bidirectional zoom, wheel, pinch and keyboard, not tw
   assert.equal(mapSettings.scrollWheelZoom, true)
   assert.equal(mapSettings.touchZoom, true)
   assert.equal(mapSettings.keyboard, true)
+  assert.equal(mapSettings.dragging, true, 'touch users can pan without opening fullscreen')
   assert.equal(mapSettings.tileUrl, 'https://tile.openstreetmap.org/{z}/{x}/{y}.png')
 })
 
-test('filters preserve all scientific places, coordinate order and cluster discovery', () => {
+test('filters preserve all six scientific places and coordinate order', () => {
   assert.equal(selectedPlaces(places, 'all').length, 6)
   assert.equal(selectedPlaces(places, 'shor').length, 3)
   assert.equal(selectedPlaces(places, 'teleut').length, 3)
   for (const place of places) assert.deepEqual(placeLatLng(place), [...place.geometry.coordinates].reverse())
-  assert.equal(shouldClusterTeleuts(8), true)
-  assert.equal(shouldClusterTeleuts(11.5), false)
-  assert.equal(shouldClusterTeleuts(18), false)
-  assert.equal(shouldClusterTeleuts(8, 'teleut'), false, 'explicit people selection must reveal the villages even on a narrow map')
-  assert.equal(shouldClusterTeleuts(10.75, 'teleut'), false)
+})
+
+test('nearby village labels separate without moving their geographic anchors or covering controls', () => {
+  const pins = [
+    { id: 'bekovo', name: 'Беково', x: 140, y: 130, width: 78, height: 44 },
+    { id: 'chelukhoyevo', name: 'Челухоево', x: 141, y: 129, width: 112, height: 44 },
+    { id: 'shanda', name: 'Шанда', x: 138, y: 132, width: 76, height: 44 },
+  ]
+  const reserved = [{ x: 232, y: 10, width: 78, height: 270 }]
+  const labels = layoutLabels(pins, 320, 600, 16, reserved)
+  assert.equal(labels.length, 3)
+  for (const label of labels) {
+    const original = pins.find(pin => pin.id === label.id)
+    assert.equal(label.x, original.x)
+    assert.equal(label.y, original.y)
+    assert.ok(label.rect.x >= 0 && label.rect.y >= 0)
+    assert.ok(label.rect.x + label.rect.width <= 320)
+    assert.ok(label.rect.y + label.rect.height <= 600)
+    assert.ok(reserved.every(rect => !rectanglesOverlap(label.rect, rect)))
+  }
+  for (let i = 0; i < labels.length; i++) for (let j = i + 1; j < labels.length; j++) assert.equal(rectanglesOverlap(labels[i].rect, labels[j].rect), false)
 })
 
 test('municipality layer has sourced admin-level-6 polygons, never mines or ethnic areas', () => {

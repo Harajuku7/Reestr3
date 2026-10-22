@@ -11,10 +11,10 @@ export const mapSettings = Object.freeze({
   touchZoom: true,
   doubleClickZoom: true,
   keyboard: true,
+  dragging: true,
   maxBounds: [[51.5, 83.5], [57.5, 91]],
   maxBoundsViscosity: .8,
 })
 
 export const selectedPlaces = (places, group) => places.filter(place => group === 'all' || place.properties.people.includes(group))
 export const placeLatLng = place => [place.geometry.coordinates[1], place.geometry.coordinates[0]]
-export const shouldClusterTeleuts = (zoom, group = 'all') => group === 'all' && zoom < 11.5

@@ -51,18 +51,18 @@ export function insideBoundary(point, geometry) {
 export const rectanglesOverlap = (a, b, gap = 4) => a.x < b.x + b.width + gap && a.x + a.width + gap > b.x && a.y < b.y + b.height + gap && a.y + a.height + gap > b.y
 
 // Labels move to make room; their geographic anchor never moves.
-export function layoutLabels(pins, width, height, fontSize = 12) {
+export function layoutLabels(pins, width, height, fontSize = 12, reserved = []) {
   const placed = []
   const ordered = [...pins].sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0))
   for (const pin of ordered) {
-    const labelWidth = Math.min(width - 24, Math.max(56, pin.name.length * fontSize * .64 + (pin.context ? 12 : 22)))
-    const labelHeight = pin.context ? 24 : 44
+    const labelWidth = Math.min(width - 24, pin.width ?? Math.max(56, pin.name.length * fontSize * .64 + (pin.context ? 12 : 22)))
+    const labelHeight = pin.height ?? (pin.context ? 24 : 44)
     const offsets = [[12, -22], [-labelWidth - 12, -22], [-labelWidth / 2, -54], [-labelWidth / 2, 12], [12, -72], [-labelWidth - 12, 34], [-labelWidth / 2, -110], [-labelWidth / 2, 68]]
     const clamp = ([dx, dy]) => ({ x: Math.max(10, Math.min(width - labelWidth - 10, pin.x + dx)), y: Math.max(38, Math.min(height - labelHeight - 30, pin.y + dy)), width: labelWidth, height: labelHeight })
     const candidates = offsets.map(clamp)
     // The fallback is useful on narrow displays and for adjacent villages.
     for (let y = 38; y < height - labelHeight - 28; y += 12) for (let x = 10; x < width - labelWidth; x += 16) candidates.push({ x, y, width: labelWidth, height: labelHeight })
-    const valid = candidates.filter(rect => !placed.some(value => rectanglesOverlap(rect, value.rect)) && !pins.some(other => rectanglesOverlap(rect, { x: other.x - 5, y: other.y - 5, width: 10, height: 10 }, 2)))
+    const valid = candidates.filter(rect => !reserved.some(value => rectanglesOverlap(rect, value, 8)) && !placed.some(value => rectanglesOverlap(rect, value.rect)) && !pins.some(other => rectanglesOverlap(rect, { x: other.x - 5, y: other.y - 5, width: 10, height: 10 }, 2)))
     valid.sort((a, b) => Math.hypot(a.x + a.width / 2 - pin.x, a.y + a.height / 2 - pin.y) - Math.hypot(b.x + b.width / 2 - pin.x, b.y + b.height / 2 - pin.y))
     if (valid[0]) placed.push({ ...pin, rect: valid[0] })
   }
