@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react"
+import { lazy, Suspense, useEffect, useState } from "react"
 import { catalogItems, catalogHref, categories, people } from "./catalog.mjs"
 import CatalogPage from './CatalogPage.jsx'
+const SettlementMap = lazy(() => import('./SettlementMap.jsx'))
 
 function Icon({ name, size = 20 }) {
   const paths = {
@@ -18,6 +19,7 @@ function Icon({ name, size = 20 }) {
 
 const baseUrl = import.meta.env.BASE_URL
 const isCatalogPage = /\/catalog(?:\/index\.html|\/)?$/.test(window.location.pathname)
+const peopleSectionTitles = { shor: 'О шорцах', teleut: 'О телеутах' }
 function readAccessibility() {
   try { return JSON.parse(localStorage.getItem('kuzbass-accessibility') || '{}') ?? {} } catch { return {} }
 }
@@ -28,7 +30,7 @@ export default function App() {
   const [fontSize, setFontSize] = useState(() => ['normal', 'large', 'xlarge'].includes(readAccessibility().fontSize) ? readAccessibility().fontSize : 'normal')
   const [contrast, setContrast] = useState(() => readAccessibility().contrast === true)
   const [spacing, setSpacing] = useState(() => readAccessibility().spacing === true)
-  const [activePeople, setActivePeople] = useState("shor")
+  const [activePeople, setActivePeople] = useState("all")
   const [announcement, setAnnouncement] = useState("")
 
   useEffect(() => {
@@ -74,7 +76,7 @@ export default function App() {
       <header className="site-header">
         <a className="brand" href={`${baseUrl}#top`} aria-label="На главную страницу каталога">
           <img src={`${baseUrl}assets/kuzbass-coat-of-arms.png`} width="50" height="58" alt="Герб Кемеровской области - Кузбасса" />
-          <span><b>Наследие Кузбасса</b><small>электронный каталог</small></span>
+          <span><b>Нематериальное наследие Кузбасса</b><small>электронный каталог</small></span>
         </a>
         <nav className={`main-nav${navOpen ? " is-open" : ""}`} aria-label="Основная навигация">
           <a href={`${baseUrl}#top`} aria-current={!isCatalogPage ? 'page' : undefined} onClick={() => setNavOpen(false)}>Главная</a>
@@ -109,32 +111,18 @@ export default function App() {
           <div className="hero-copy">
             <p className="kicker">Кемеровская область - Кузбасс</p>
             <h1>Каталог нематериального этнокультурного наследия коренных малочисленных народов Кузбасса</h1>
-            <p className="hero-lead">Живые традиции, обряды, ремесла и знания шорцев и телеутов в едином научно-просветительском пространстве.</p>
+            <p className="hero-lead">Традиции, обряды, ремёсла и хозяйственные занятия шорцев и телеутов.</p>
             <div className="hero-actions">
               <button className="primary-button" type="button" onClick={() => openCatalog()}><span>Открыть каталог</span><Icon name="arrow" /></button>
-              <a className="quiet-link" href="#map-description">Как устроена карта</a>
+              <a className="quiet-link" href="#map-description">Где живут шорцы и телеуты</a>
             </div>
           </div>
 
-          <div className="map-stage" aria-labelledby="map-title">
-            <div className="map-heading">
-              <div><p className="kicker">Карта расселения</p><h2 id="map-title">Народы Кузбасса</h2></div>
-              <p>Выберите народ на карте</p>
-            </div>
-            <div className="map-canvas" data-active={activePeople}>
-              <img src={`${baseUrl}assets/kemerovo-outline-raster.png`} width="713" height="1023" alt="Контурная карта Кемеровской области с муниципальными границами" />
-              <button className="map-marker map-marker--teleut" type="button" aria-pressed={activePeople === "teleut"} onClick={() => choosePeople("teleut")}><span className="marker-index">02</span><span>Телеуты<small>Бачатские земли</small></span></button>
-              <button className="map-marker map-marker--shor" type="button" aria-pressed={activePeople === "shor"} onClick={() => choosePeople("shor")}><span className="marker-index">01</span><span>Шорцы<small>Горная Шория</small></span></button>
-              <div className="map-note">Схема ареалов предварительная и будет уточнена научным коллективом</div>
-            </div>
-            <div className="map-legend" aria-label="Условные обозначения">
-              <span><i className="legend-mark shor" />Шорцы</span><span><i className="legend-mark teleut" />Телеуты</span>
-            </div>
-          </div>
+          <Suspense fallback={<div className="map-loading" role="status">Загружаем карту…</div>}><SettlementMap activePeople={activePeople} onPeopleChange={setActivePeople} textSize={fontSize} spaced={spacing}/></Suspense>
         </section>
 
         <section className="map-alternative" id="map-description" aria-labelledby="map-alt-title">
-          <div><p className="section-number">Карта без визуального слоя</p><h2 id="map-alt-title">Текстовое представление ареалов</h2></div>
+          <div><p className="section-number">География</p><h2 id="map-alt-title">Где живут шорцы и телеуты</h2></div>
           <ul>{people.map((item) => <li key={item.id}><button type="button" onClick={() => choosePeople(item.id)}><strong>{item.name}</strong><span>{item.area}</span><Icon name="arrow" size={18} /></button></li>)}</ul>
         </section>
 
@@ -144,19 +132,19 @@ export default function App() {
         </section>
 
         <section className="people-section" aria-labelledby="people-title">
-          <div className="section-intro"><p className="section-number">02 / Народы</p><h2 id="people-title">Разные традиции.<br />Один регион.</h2><p>Разделы равнозначны и раскрывают наследие через практики, территории и связанные музейные свидетельства.</p></div>
+          <div className="section-intro"><p className="section-number">02 / Народы</p><h2 id="people-title">Разные традиции.<br />Один регион.</h2></div>
           <div className="people-list">
             {people.map((item, index) => (
               <article className="people-story" id={`people-${item.id}`} key={item.id}>
                 <div className="people-image"><img src={`${baseUrl}${item.image}`} alt={item.alt} loading="lazy" width="1200" height="800" /><span>0{index + 1}</span></div>
-                <div className="people-copy"><p className="kicker">{item.eyebrow}</p><h3>{item.name}</h3><p>{item.summary}</p><p className="area"><Icon name="marker" size={19} />{item.area}</p><div className="story-links"><button type="button" className="primary-button compact" onClick={() => openCatalog({ people: item.id })}>Смотреть наследие <Icon name="arrow" /></button><a href={item.source} target="_blank" rel="noreferrer">Источник изображения</a></div></div>
+                <div className="people-copy"><p className="kicker">{item.eyebrow}</p><h3>{peopleSectionTitles[item.id] ?? item.name}</h3><p>{item.summary}</p><p className="area"><Icon name="marker" size={19} />{item.area}</p><div className="story-links"><button type="button" className="primary-button compact" onClick={() => openCatalog({ people: item.id })}>Смотреть наследие <Icon name="arrow" /></button><a href={item.source} target="_blank" rel="noreferrer">Источник изображения</a></div></div>
               </article>
             ))}
           </div>
         </section>
 
         <section className="classification" id="classification" aria-labelledby="classification-title">
-          <div className="classification-intro"><p className="section-number">03 / Классификация</p><h2 id="classification-title">Нематериальное культурное наследие разнообразно и неоднородно</h2><p>Для удобства объекты объединяются в категории. Выберите направление, чтобы перейти к записям каталога.</p></div>
+          <div className="classification-intro"><p className="section-number">03 / Классификация</p><h2 id="classification-title">Категории наследия</h2><p>Этнокультурное нематериальное наследие очень разнообразно. Чтобы было проще в нём ориентироваться, мы разделили его на категории.</p></div>
           <ol className="category-list">
             {categories.map((category) => <li key={category.id}><button type="button" onClick={() => openCatalog({ category: category.id })}><span className="category-index">{category.index}</span><span className="category-name">{category.label}</span><span className="category-description">{category.items.map((item) => <span key={item}>{item}</span>)}</span><Icon name="arrow" /></button></li>)}
           </ol>
